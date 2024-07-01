@@ -2,7 +2,7 @@ name: Django CI
 
 on:
   push:
-    branches: [fix-test]
+    branches: [fix-gha]
 #  pull_request:
 #    branches:
 #      - develop
