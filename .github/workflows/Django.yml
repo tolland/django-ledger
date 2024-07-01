@@ -2,15 +2,15 @@ name: Django CI
 
 on:
   push:
-    branches: [develop]
-  pull_request:
-    branches:
-      - develop
-  workflow_dispatch:
+    branches: [fix-test]
+#  pull_request:
+#    branches:
+#      - develop
+#  workflow_dispatch:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     # strategy:
     #   matrix:
     #     python-version: [ '3.8.10', '3.9.0', '3.10.0' ]
@@ -19,16 +19,17 @@ jobs:
       - uses: actions/checkout@v2
 
       # - name: Set up Python ${{ matrix.python-version }}
-      - name: Set up Python 3.9
+      - name: Set up Python 3.11
         uses: actions/setup-python@v2
         with:
-          python-version: 3.9
+          python-version: 3.11
           # python-version: ${{ matrix.python-version }}
 
       - name: Install Dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -r requirements.txt
+          pip install pipenv
+          pipenv install --dev
       - name: Run Tests
         run: |
-          python manage.py test --noinput
+          pipenv run python manage.py test --noinput
