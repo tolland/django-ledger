@@ -234,17 +234,32 @@ class GetTransactionModelFormSetClassTest(DjangoLedgerBaseTest):
         The Formset will contain 6 extra forms & delete fields if Journal Entry is unlocked.
         """
         entity_model: EntityModel = self.get_random_entity_model()
+
         ledger_model: LedgerModel = self.get_random_ledger(entity_model=entity_model)
+
+        print("ledger_model is locked", ledger_model.is_locked())
+        print("ledger_model is_posted", ledger_model.is_posted())
+
         je_model: JournalEntryModel = self.get_random_je(entity_model=entity_model, ledger_model=ledger_model)
+
+        print("je_model.is_locked() in test after creation: " + str(je_model.is_locked()))
+
         je_model.mark_as_unlocked(commit=True)
 
+        print("je_model.is_locked(): "+str(je_model.is_locked()))
+
         transaction_model_form_set = get_transactionmodel_formset_class(journal_entry_model=je_model)
+
+        print("je_model.is_locked() :" + je_model.is_locked())
+
         txs_formset = transaction_model_form_set(
             user_model=self.user_model,
             je_model=je_model,
             ledger_pk=ledger_model,
             entity_slug=entity_model.slug,
         )
+
+        print("je_model.is_locked() :" + je_model.is_locked())
 
         self.assertTrue(not je_model.is_locked(),
                         msg="At this point in this test case, Journal Entry should be unlocked.")

@@ -427,6 +427,11 @@ class JournalEntryModelAbstract(CreateUpdateMixIn):
         bool
             True if JournalEntryModel can be un-locked, otherwise False.
         """
+        print("in can_unlock je is locked", self.is_locked())
+        print("in can_unlock je is posted", self.is_posted())
+        print("in can_unlock je is in locked period", self.is_in_locked_period())
+        print("in can_unlock ledger is locked", self.ledger.is_locked())
+        print("in can_unlock ledger is posted", self.ledger.is_posted())
         return all([
             self.is_locked(),
             not self.is_posted(),
@@ -684,10 +689,13 @@ class JournalEntryModelAbstract(CreateUpdateMixIn):
         kwargs: dict
             Additional keyword arguments.
         """
+        print("is locked", self.is_locked())
         if not self.can_unlock():
+            print("not self can unlock")
             if raise_exception:
                 raise JournalEntryValidationError(f'Journal Entry {self.uuid} is already unlocked.')
         else:
+            print("self can unlock")
             if self.is_locked():
                 self.locked = False
                 if not self.is_locked():
