@@ -1490,8 +1490,11 @@ class EntityModelAbstract(MP_Node,
         return coa_model, coa_model.create_account(**account_model_kwargs)
 
     # ### LEDGER MANAGEMENT ####
-    def get_ledgers(self, posted: bool = True):
-        return self.ledgermodel_set.filter(posted=posted)
+    def get_ledgers(self, posted: bool = True, locked : Optional[bool] = None):
+        filters = {'posted': posted}
+        if locked is not None:
+            filters['locked'] = locked
+        return self.ledgermodel_set.filter(**filters)
 
     # ### JOURNAL ENTRY MANAGEMENT ####
     def get_journal_entries(self, ledger_model: LedgerModel, posted: bool = True):

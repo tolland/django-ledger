@@ -203,14 +203,20 @@ class DjangoLedgerBaseTest(TestCase):
     def get_random_ledger(self,
                           entity_model: EntityModel,
                           qs_limit: int = 100,
-                          posted: bool = True) -> LedgerModel:
+                          posted: bool = True,
+                          locked: Optional[bool] = None) -> LedgerModel:
         """
         Returns 1 random LedgerModel object.
         """
         ledger_model_qs = entity_model.get_ledgers(
-            posted=posted).filter(
+            posted=posted,
+            locked=locked
+        ).filter(
             journal_entries__count__gt=0
         )
+
+        for ledger_model in ledger_model_qs:
+            print(f"LedgerModel: {ledger_model} is posted: {ledger_model.is_posted} is locked {ledger_model.is_locked}")
 
         # no need to check because data generator will always populate an entity with sample data.
         # if not ledger_model.exists():
@@ -228,6 +234,7 @@ class DjangoLedgerBaseTest(TestCase):
                       entity_model: EntityModel,
                       ledger_model: Optional[LedgerModel] = None,
                       posted: bool = True,
+                      locked: Optional[bool] = None,
                       qs_limit: int = 100
                       ) -> JournalEntryModel:
         """.

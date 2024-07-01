@@ -691,9 +691,15 @@ class JournalEntryModelAbstract(CreateUpdateMixIn):
         """
         print("is locked", self.is_locked())
         if not self.can_unlock():
-            print("not self can unlock")
             if raise_exception:
-                raise JournalEntryValidationError(f'Journal Entry {self.uuid} is already unlocked.')
+                if not self.is_locked():
+                    raise JournalEntryValidationError(f'Journal Entry {self.uuid} is already unlocked.')
+                elif self.is_posted():
+                    raise JournalEntryValidationError(f'Journal Entry {self.uuid} is posted.')
+                elif self.is_in_locked_period():
+                    raise JournalEntryValidationError(f'Journal Entry {self.uuid} is in a locked period.')
+                elif self.ledger.is_locked():
+                    raise JournalEntryValidationError(f'Ledger {self.ledger.uuid} is locked.')
         else:
             print("self can unlock")
             if self.is_locked():
